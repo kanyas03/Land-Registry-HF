@@ -40,7 +40,7 @@ type BuyerOwnership struct {
 	SellingPrice string `json:"sellingPrice"`
 }
 
-// List land (public data only)
+// Org1 Seller lists land to public ledger
 func (c *LandContract) ListLand(ctx contractapi.TransactionContextInterface, landID string, location string, size string, landType string, soilQuality string, waterSource string, nearbyRoad string, nearbyCity string, coordinates string, sellingPrice string) error {
 	msp, _ := ctx.GetClientIdentity().GetMSPID()
 	if msp != "Org1MSP" {
@@ -82,7 +82,7 @@ func (c *LandContract) ListLand(ctx contractapi.TransactionContextInterface, lan
 	return nil
 }
 
-// Get land by ID (public)
+// Anyone (e.g., Org1, Org2, Org3) can get public land info
 func (c *LandContract) GetLandByID(ctx contractapi.TransactionContextInterface, landID string) (*Land, error) {
 	landBytes, err := ctx.GetStub().GetState(landID)
 	if err != nil {
@@ -101,7 +101,7 @@ func (c *LandContract) GetLandByID(ctx contractapi.TransactionContextInterface, 
 	return &land, nil
 }
 
-// Buyer views available lands
+// Buyer (Org2) views lands that are For Sale
 func (c *LandContract) GetAvailableLands(ctx contractapi.TransactionContextInterface) ([]*Land, error) {
 	msp, _ := ctx.GetClientIdentity().GetMSPID()
 	if msp != "Org2MSP" {
@@ -132,7 +132,7 @@ func (c *LandContract) GetAvailableLands(ctx contractapi.TransactionContextInter
 	return lands, nil
 }
 
-// Buyer sends request (private)
+// Buyer (Org2) sends private request to buy land
 func (c *LandContract) RequestToBuy(ctx contractapi.TransactionContextInterface, offerID string) error {
 	msp, _ := ctx.GetClientIdentity().GetMSPID()
 	if msp != "Org2MSP" {
@@ -148,14 +148,19 @@ func (c *LandContract) RequestToBuy(ctx contractapi.TransactionContextInterface,
 		return fmt.Errorf("buyerRequest key missing in transient data")
 	}
 
-	return ctx.GetStub().PutPrivateData("collectionBuyerSeller", offerID, privateData)
+	err = ctx.GetStub().PutPrivateData("collectionBuyerSeller", offerID, privateData)
+	if err != nil {
+		return fmt.Errorf("failed to store buyer request: %v", err)
+	}
+
+	return nil
 }
 
-// Land Registry assigns land to buyer (private)
+// Land Registry (Org3) assigns land to buyer and stores private ownership
 func (c *LandContract) RegisterToBuyer(ctx contractapi.TransactionContextInterface, landID string) (string, error) {
 	msp, _ := ctx.GetClientIdentity().GetMSPID()
 	if msp != "Org3MSP" {
-		return "", fmt.Errorf("only LandRegistry (Org3) can register to buyer")
+		return "", fmt.Errorf("only LandRegistry (Org3) can register land to buyer")
 	}
 
 	landBytes, err := ctx.GetStub().GetState(landID)
@@ -164,9 +169,18 @@ func (c *LandContract) RegisterToBuyer(ctx contractapi.TransactionContextInterfa
 	}
 
 	var land Land
-	json.Unmarshal(landBytes, &land)
+	err = json.Unmarshal(landBytes, &land)
+	if err != nil {
+		return "", fmt.Errorf("error parsing land data: %v", err)
+	}
+
 	land.Status = "Sold"
-	updatedJSON, _ := json.Marshal(land)
+
+	updatedJSON, err := json.Marshal(land)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal updated land: %v", err)
+	}
+
 	err = ctx.GetStub().PutState(landID, updatedJSON)
 	if err != nil {
 		return "", fmt.Errorf("failed to update land status: %v", err)
