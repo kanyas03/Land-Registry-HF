@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Land Registry</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+</head>
+<body class="container py-4">
+  <h2>Land Registry System</h2>
+
+  <!-- List Land -->
+  <section>
+    <h4>1. List Land (Seller)</h4>
+    <form id="listLandForm">
+      <div class="row">
+        <div class="col-md-4"><input class="form-control mb-2" name="landID" placeholder="Land ID" required></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="location" placeholder="Location" required></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="size" placeholder="Size" required></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="type" placeholder="Type" required></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="soilQuality" placeholder="Soil Quality"></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="waterSource" placeholder="Water Source"></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="nearbyRoad" placeholder="Nearby Road"></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="nearbyCity" placeholder="Nearby City"></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="coordinates" placeholder="Coordinates"></div>
+        <div class="col-md-4"><input class="form-control mb-2" name="sellingPrice" placeholder="Selling Price" required></div>
+      </div>
+      <button class="btn btn-primary">List Land</button>
+    </form>
+    <div id="listLandResult" class="mt-2"></div>
+  </section>
+
+  <hr />
+
+  <!-- Get Available Lands -->
+  <section>
+    <h4>2. Get Available Lands (Buyer)</h4>
+    <button class="btn btn-success" onclick="getAvailableLands()">Get Lands</button>
+    <pre id="availableLands" class="bg-light p-3 mt-2"></pre>
+  </section>
+
+  <hr />
+
+  <!-- Request to Buy -->
+  <section>
+    <h4>3. Request to Buy (Buyer)</h4>
+    <form id="requestBuyForm">
+      <input class="form-control mb-2" name="offerID" placeholder="Offer ID" required>
+      <input class="form-control mb-2" name="buyerName" placeholder="Buyer Name" required>
+      <input class="form-control mb-2" name="aadhar" placeholder="Aadhar" required>
+      <input class="form-control mb-2" name="price" placeholder="Offer Price" required>
+      <button class="btn btn-warning">Request to Buy</button>
+    </form>
+    <div id="requestBuyResult" class="mt-2"></div>
+  </section>
+
+  <hr />
+
+  <!-- Register to Buyer -->
+  <section>
+    <h4>4. Register to Buyer (Land Registry)</h4>
+    <form id="registerBuyerForm">
+      <input class="form-control mb-2" name="landID" placeholder="Land ID" required>
+      <input class="form-control mb-2" name="ownerID" placeholder="Owner ID" required>
+      <input class="form-control mb-2" name="buyerName" placeholder="Buyer Name" required>
+      <input class="form-control mb-2" name="aadhar" placeholder="Aadhar" required>
+      <input class="form-control mb-2" name="documentHash" placeholder="Document Hash" required>
+      <input class="form-control mb-2" name="transferDate" placeholder="Transfer Date" required>
+      <input class="form-control mb-2" name="location" placeholder="Location" required>
+      <input class="form-control mb-2" name="size" placeholder="Size" required>
+      <input class="form-control mb-2" name="type" placeholder="Type" required>
+      <input class="form-control mb-2" name="coordinates" placeholder="Coordinates" required>
+      <input class="form-control mb-2" name="sellingPrice" placeholder="Selling Price" required>
+      <button class="btn btn-dark">Register to Buyer</button>
+    </form>
+    <pre id="registerBuyerResult" class="bg-light p-3 mt-2"></pre>
+  </section>
+
+  <script src="/static/index.js"></script>
+</body>
+</html>
